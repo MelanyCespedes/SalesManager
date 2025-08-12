@@ -1,0 +1,9 @@
+
+services:
+  sqlite-server:
+    build: ./db-service
+    container_name: sqlite-server
+    volumes:
+      - ./db-service/db-data:/app
+    stdin_open: true
+    tty: true
