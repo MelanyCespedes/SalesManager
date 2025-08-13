@@ -6,6 +6,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.application.Platform;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class frmViewController {
 
@@ -31,12 +38,8 @@ public class frmViewController {
         clientIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         clientNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        ObservableList<Client> clientsData = FXCollections.observableArrayList(
-            new Client(1, "Juan"),
-            new Client(2, "Ana"),
-            new Client(3, "Luis")
-        );
-        clientsTable.setItems(clientsData);
+        // Obtener clientes desde la API REST
+        loadClientsFromApi();
 
         // Configuración de columnas para compras
         purchaseIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -49,6 +52,41 @@ public class frmViewController {
             new Purchase(103, "Keyboard", 45.0)
         );
         purchasesTable.setItems(purchasesData);
+    }
+
+    private void loadClientsFromApi() {
+        new Thread(() -> {
+            try {
+                URL url = new URL("http://localhost:8000/clientes");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Accept", "application/json");
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    response.append(line);
+                }
+                br.close();
+
+                ObservableList<Client> clientsData = FXCollections.observableArrayList();
+                JSONArray jsonArray = new JSONArray(response.toString());
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject cliente = jsonArray.getJSONObject(i);
+                    int id = cliente.getInt("id");
+                    String name = cliente.getString("nombre");
+                    clientsData.add(new Client(id, name));
+                }
+
+                Platform.runLater(() -> {
+                    clientsTable.setItems(clientsData);
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     public static class Client {
