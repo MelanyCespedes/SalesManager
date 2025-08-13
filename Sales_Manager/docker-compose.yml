@@ -1,9 +1,17 @@
 
 services:
-  sqlite-server:
+  sqlite-db:
     build: ./db-service
-    container_name: sqlite-server
+    container_name: sqlite-container
     volumes:
-      - ./db-service/db-data:/app
-    stdin_open: true
+      # Montar directorio local para persistencia de datos
+      - ./data:/data 
+    ports:
+      # Puerto opcional para herramientas que requieren conexión de red
+      - "8080:8080" 
+    # Mantener el contenedor corriendo
     tty: true
+    stdin_open: true 
+
+
+    #C:/Users/prisc/OneDrive/Documentos/Github/SalesManager/Sales_Manager/data/database.db
