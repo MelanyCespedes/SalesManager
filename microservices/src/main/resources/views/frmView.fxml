@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+
+<HBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" spacing="10"
+      fx:controller="com.una.controllers.frmViewController">
+    <TableView fx:id="clientsTable" prefWidth="250">
+        <columns>
+            <TableColumn fx:id="clientIdCol" text="ID" />
+            <TableColumn fx:id="clientNameCol" text="Nombre" />
+        </columns>
+    </TableView>
+    <TableView fx:id="purchasesTable" prefWidth="330">
+        <columns>
+            <TableColumn fx:id="purchaseIdCol" text="ID" />
+            <TableColumn fx:id="purchaseProductCol" text="Producto" />
+            <TableColumn fx:id="purchaseAmountCol" text="Monto" />
+        </columns>
+    </TableView>
+</HBox>
